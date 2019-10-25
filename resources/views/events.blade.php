@@ -5,8 +5,8 @@
     <h1>Events</h1>
     <div class="row">
         <div class="col-4">
-            @if (count($events)>0)
-            @foreach ($events ?? '' as $event)
+            @if (count($events ?? '')>0)
+            @foreach ($events ?? '' ?? '' as $event)
             <div class="list-group text-center" id="list-tab" role="tablist">
 
                 <a href="?id={{$event->id}}" class="list-group-item list-group-item-action">
@@ -16,7 +16,7 @@
                     
             @endforeach
         
-            {{$events ?? ''->links()}}
+            {{$events ?? '' ?? ''->links()}}
             @else
             <div class="alert text-center alert-danger" role="alert">
                 No events Found!!

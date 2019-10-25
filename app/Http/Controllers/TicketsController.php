@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Event;
 use App\Ticket;
 use Illuminate\Http\Request;
 
@@ -39,21 +40,48 @@ class TicketsController extends Controller
     {
         $tickets = Ticket::where('user_id',auth()->user()->id)->get();
         foreach ($tickets as $ticket) {
-            if ($ticket->type == $request->type && $ticket->user_id == auth()->user()->id) {
-                if ($ticket->type ==1) {
-                    $type = 'student';
+            
+            if ($ticket->user_id == auth()->user()->id && $ticket->type == $request->type) {
+                if ($ticket->type == 1) {
+                    return redirect('/events?id='.$request->event_id)->with('failed','You already have a Student ticket reserved ');
                 }
-                else{
-                    $type = 'normal';
+                else if ($ticket->type == 2) {
+                    return redirect('/events?id='.$request->event_id)->with('failed','You already have a Normal ticket reserved ');
                 }
             }
-            return redirect('/events?id='.$request->event_id)->with('failed','You already have a '.$type.' ticket reserved ');
+            
         }
+        $events = Event::where('id',$request->event_id)->get();
+        foreach ($events as  $event) {
+
+            if ($request->type == 1) {
+                if($event->rem_std>0)
+                    $event->rem_std --;
+                else
+                    return redirect('/events?id='.$request->event_id)->with('failed','There are no more Student tickets left for this event! ');
+  
+            }
+            else if ($request->type == 2) {
+                if($event->rem_nrm>0)
+                    $event->rem_nrm --;
+                else
+                    return redirect('/events?id='.$request->event_id)->with('failed','There are no more Normal tickets left for this event! ');
+            }
+        }
+        $event->save();
         $ticket = new Ticket;
         $ticket->user_id= auth()->user()->id;
         $ticket->event_id= $request->event_id;
         $ticket->type=$request->type;
+        $ticket->created_at=now();
+        $ticket->updated_at=now();
+        
         $ticket->save();
+
+
+
+
+
         return redirect('/events?id='.$request->event_id)->with('success','Reservation Complete!');
     }
 

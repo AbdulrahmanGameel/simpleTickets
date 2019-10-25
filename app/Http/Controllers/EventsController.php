@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Event;
+use App\Ticket;
 use Illuminate\Http\Request;
 
 class EventsController extends Controller
@@ -14,7 +15,8 @@ class EventsController extends Controller
      */
     public function index()
     {
-        $events = Event::orderBy('created_at','desc')->paginate(20);
+        
+        $events = Event::orderBy('id','asc')->paginate(20);
         return view('events')->with('events',$events);
     }
 
@@ -48,7 +50,7 @@ class EventsController extends Controller
     public function show($id)
     {
         $event = Event::find($id);
-        return view('reservation')->with('event',$event);
+        return view('events')->with('event',$event);
     }
 
     /**
@@ -71,7 +73,7 @@ class EventsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
