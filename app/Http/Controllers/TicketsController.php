@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Event;
 use App\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketsController extends Controller
 {
@@ -38,10 +39,14 @@ class TicketsController extends Controller
      */
     public function store(Request $request)
     {
+        if (!Auth::check())
+        {
+            return redirect('/events?id='.$request->event_id)->with('failed','Please Login to book');
+        }
         $tickets = Ticket::where('user_id',auth()->user()->id)->get();
         foreach ($tickets as $ticket) {
             
-            if ($ticket->user_id == auth()->user()->id && $ticket->type == $request->type) {
+            if ($ticket->event_id == $request->event_id && $ticket->type == $request->type) {
                 if ($ticket->type == 1) {
                     return redirect('/events?id='.$request->event_id)->with('failed','You already have a Student ticket reserved ');
                 }

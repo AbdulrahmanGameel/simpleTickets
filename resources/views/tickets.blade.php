@@ -1,7 +1,10 @@
 
-  <?php $id =1;?>
   <?php if(isset($_GET['id']))
-$id =$_GET['id']|1;?>
+          $id =$_GET['id'];
+        else {
+          $id =1;
+        }
+  ?>
   <legend>Available Tickets</legend>
   <div class="col-sm-10">
    
